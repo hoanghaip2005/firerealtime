@@ -1,0 +1,19 @@
+.mo-fire {
+    position: relative;
+    height: 200px;
+    transform-origin: center bottom;
+}
+
+.flame-scan {
+    animation: flameScan 2s ease-in-out forwards;
+    clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
+}
+
+@keyframes flameScan {
+    from {
+        clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
+    }
+    to {
+        clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    }
+}
