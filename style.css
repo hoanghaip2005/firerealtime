@@ -1,12 +1,31 @@
+.mo-fire svg .spark {
+  opacity: 0.85;
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: sparkFloat var(--dur, 3s) ease-in infinite;
+  animation-delay: var(--delay, 0s);
+  will-change: transform, opacity;
+}
+
+@keyframes sparkFloat {
+  0% {
+    transform: translate(var(--x, 60px), var(--y, 140px)) scale(var(--s, 1)) rotate(var(--r, 0deg));
+    opacity: 0;
+  }
+  10% { opacity: 1; }
+  100% {
+    transform: translate(calc(var(--x, 60px) + var(--fx, 0px)), calc(var(--y, 140px) - var(--fy, 40px))) scale(calc(var(--s,1) * 0.95)) rotate(var(--r, 0deg));
+    opacity: 0;
+  }
+}
 .mo-fire {
   width: 200px;
   height: auto;
   position: absolute;
   left:77.5%;
   margin-left: -100px;
-  top: 14%;
-  clip-path: inset(100% 0 0 0);
-  transition: clip-path 1.5s ease-in-out;
+  top: 13.8%;
+  /* clip-path removed; scan is applied only to flame shapes via SVG clipPath */
 }
 .mo-fire svg {
   width: 100%;
@@ -72,4 +91,87 @@
     transform: translate(-20px, -100px) rotate(180deg);
     opacity: 0;
   }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -30%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+#successMessage {
+  animation: fadeIn 2s ease-out forwards;
+}
+
+/* Sparks animation (de-duped and unified above) */
+
+/* Title (H1) appears first */
+#successMessage h1 {
+  opacity: 0;
+  transform: translateY(10px) scale(0.98);
+  animation: titleIn 1s ease-out forwards;
+  animation-delay: 0.2s;
+}
+
+@keyframes titleIn {
+  0% { opacity: 0; transform: translateY(10px) scale(0.98); filter: blur(1px); }
+  70% { opacity: 1; transform: translateY(0) scale(1.01); filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Phrase-by-phrase staggered appear for success message */
+#successMessage .phrase, #successMessage .sep {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(15px) scale(0.98);
+}
+
+#successMessage.animate .phrase, #successMessage.animate .sep {
+  animation: phraseIn 0.6s ease-out forwards;
+  animation-delay: calc(var(--base, 0s) + var(--d, 0s));
+}
+
+@keyframes phraseIn {
+  0% { opacity: 0; transform: translateY(15px) scale(0.98); filter: blur(2px); }
+  70% { opacity: 1; transform: translateY(0) scale(1.01); filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Left-side name stream */
+#nameStream {
+  z-index: 1000;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw; /* full window width */
+  height: 100vh;
+  overflow: hidden;
+  pointer-events: none; /* let clicks pass through */
+}
+.name-item {
+  position: absolute;
+  left: var(--left, 30px);
+  bottom: -2.5rem; /* start below viewport */
+  transform: translateX(var(--x, 0));
+  color: #fff;
+  font-family: 'DejaVu Serif', serif;
+  font-size: 24px; /* randomized per item (40-50px) */
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+  line-height: 1.6;
+  opacity: 0;
+  animation: riseUp var(--dur, 10s) ease-out forwards;
+  animation-delay: var(--delay, 0s);
+}
+@keyframes riseUp {
+  0% { transform: translateX(var(--x, 0)) translateY(40px) scaleX(var(--sx, 1)); opacity: 0; }
+  5% { opacity: 1; }
+  95% { opacity: 1; }
+  100% { transform: translateX(var(--x, 0)) translateY(-110vh) scaleX(var(--sx, 1)); opacity: 0; }
 }

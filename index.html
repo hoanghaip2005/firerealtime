@@ -7,7 +7,6 @@
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
     <script src="random.js"></script>
-    <script src="https://apis.google.com/js/api.js"></script>
     <script>
         const API_KEY = 'AIzaSyCbJ2QbFkvDpzIrbijzl6Km7pMB0VNvpi0';
         const SPREADSHEET_ID = '1GJlGbhDQRyRX5FrwhVmnbWvohuItY27rKzcVNdhfeBs';
@@ -17,11 +16,10 @@
             gapi.client.init({
                 'apiKey': API_KEY,
                 'discoveryDocs': ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
-            }).then(function() {
+            }).then(function () {
                 updateCounter();
-                // Update counter every 1 second for real-time updates
-                setInterval(updateCounter, 1000);
-            }).catch(function(error) {
+                setInterval(updateCounter, 3000);
+            }).catch(function (error) {
                 console.error('Error initializing Google Sheets API:', error);
             });
         }
@@ -52,22 +50,33 @@
 <body>
 
 
+    <!-- Left-side name stream (1/3 width) -->
+    <div id="nameStream" aria-live="polite"></div>
+
+
     <div class="mo-fire">
         <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
             x="0px" y="0px" width="125px" height="189.864px" viewBox="0 0 125 189.864"
             enable-background="new 0 0 125 189.864" xml:space="preserve">
+            <!-- Scan clipPath to reveal only the flame shapes, not the sparks -->
+            <defs>
+                <clipPath id="scanClip">
+                    <rect id="scanRect" x="0" y="189.864" width="125" height="0" />
+                </clipPath>
+            </defs>
+            <g id="flame-shapes" clip-path="url(#scanClip)">
             <path class="flame-main" fill="#F36E21" d="M76.553,186.09c0,0-10.178-2.976-15.325-8.226s-9.278-16.82-9.278-16.82s-0.241-6.647-4.136-18.465
-        c0,0,3.357,4.969,5.103,9.938c0,0-5.305-21.086,1.712-30.418c7.017-9.333,0.571-35.654-2.25-37.534c0,0,13.07,5.64,19.875,47.54
-        c6.806,41.899,16.831,45.301,6.088,53.985" />
+                c0,0,3.357,4.969,5.103,9.938c0,0-5.305-21.086,1.712-30.418c7.017-9.333,0.571-35.654-2.25-37.534c0,0,13.07,5.64,19.875,47.54
+                c6.806,41.899,16.831,45.301,6.088,53.985" />
             <path class="flame-main one" fill="#F6891F"
                 d="M61.693,122.257c4.117-15.4,12.097-14.487-11.589-60.872c0,0,32.016,10.223,52.601,63.123
-        c20.585,52.899-19.848,61.045-19.643,61.582c0.206,0.537-19.401-0.269-14.835-18.532S57.576,137.656,61.693,122.257z" />
+                c20.585,52.899-19.848,61.045-19.643,61.582c0.206,0.537-19.401-0.269-14.835-18.532S57.576,137.656,61.693,122.257z" />
             <path class="flame-main two" fill="#FFD04A" d="M81.657,79.192c0,0,11.549,24.845,3.626,40.02c-7.924,15.175-21.126,41.899-0.425,64.998
-        C84.858,184.21,125.705,150.905,81.657,79.192z" />
+                C84.858,184.21,125.705,150.905,81.657,79.192z" />
             <path class="flame-main three" fill="#FDBA16" d="M99.92,101.754c0,0-23.208,47.027-12.043,80.072c0,0,32.741-16.073,20.108-45.79
-        C95.354,106.319,99.92,114.108,99.92,101.754z" />
+                C95.354,106.319,99.92,114.108,99.92,101.754z" />
             <path class="flame-main four" fill="#F36E21" d="M103.143,105.917c0,0,8.927,30.753-1.043,46.868c-9.969,16.115-14.799,29.041-14.799,29.041
-        S134.387,164.603,103.143,105.917z" />
+                S134.387,164.603,103.143,105.917z" />
             <path class="flame-main five" fill="#FDBA16"
                 d="M62.049,104.171c0,0-15.645,67.588,10.529,77.655C98.753,191.894,69.033,130.761,62.049,104.171z" />
             <path class="flame" fill="#F36E21"
@@ -76,59 +85,314 @@
                 d="M55.592,126.854c0,0-3.819,13.29,2.699,16.945C64.038,141.48,55.907,132.263,55.592,126.854z" />
             <path class="flame two" fill="#F36E21"
                 d="M54.918,104.595c0,0-3.959,6.109-1.24,8.949C56.93,113.256,52.228,107.329,54.918,104.595z" />
+            </g>
+
+            <!-- Sparks symbol and container -->
+            <defs>
+                <!-- Normalize spark shape around (0,0) so translate works as absolute placement -->
+                <g id="spark-shape" transform="translate(0,0)">
+                    <path class="flame" fill="#F36E21" d="M54.918,104.595c0,0-3.959,6.109-1.24,8.949C56.93,113.256,52.228,107.329,54.918,104.595z"/>
+                </g>
+            </defs>
+            <g id="sparks"></g>
         </svg>
 
 
     </div>
-    <div style="text-align: center; position: absolute; top: 75%; width: 100%; color: white;">
-        <h1 id="counter" style="font-size: 100px;">0/136</h1>
-        <h1 id="successMessage" style="font-size: 60px; display: none; color: #FFD700;">Thành Công!</h1>
+    <div style="position: fixed; bottom: 10px; right: 10px; color: white; text-align: right;">
+        <div style="display:flex; gap:8px; align-items:center; justify-content:flex-end;">
+            <div id="timerDisplay" style="min-width:60px; font-weight:600; font-size: 14px; padding: 4px 6px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.35); border-radius: 4px;">03:00</div>
+            <button id="startBtn" title="Bắt đầu đếm ngược"
+                style="font-size: 12px; padding: 4px 8px; color: #fff; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.4); border-radius: 4px; cursor: pointer;">
+                Bắt đầu
+            </button>
+        </div>
+        <h1 id="counter" style="font-size: 15px; margin: 8px 0 0;">0/136</h1>
+        <button id="resetBtn" title="Reset counter"
+            style="margin-top: 6px; font-size: 12px; padding: 4px 8px; color: #fff; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.4); border-radius: 4px; cursor: pointer;">
+            Reset
+        </button>
+    </div>
+
+    <div id="successMessage"
+        style="display: none; position: fixed; top: 50%; left: 35.33%; transform: translate(0, -50%); text-align: center; color: white; z-index: 1000; width: 65.66%;"
+        data-anim="true">
+        <h1
+            style="font-size: 90px; margin-bottom: 15px; font-family: 'DejaVu Serif', serif; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000; text-transform: uppercase;">
+            Tuổi Trẻ Xã Thanh Oai</h1>
+        <h2
+            style="font-size: 70px; margin: 0; line-height: 1.5; font-family: 'DejaVu Serif', serif; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;">
+            <span class="phrase" style="--d:0.0s">Tiên Phong</span>
+            <span class="sep" style="--d:0.4s"> - </span>
+            <span class="phrase" style="--d:0.8s">Đoàn Kết</span>
+            <span class="sep" style="--d:1.2s"> - </span>
+            <span class="phrase" style="--d:1.6s">Sáng Tạo</span>
+        </h2>
+        <h2
+            style="font-size: 70px; margin: 0; line-height: 1.5; font-family: 'DejaVu Serif', serif; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;">
+            <span class="phrase" style="--d:2.2s">Đột Phá</span>
+            <span class="sep" style="--d:2.6s"> - </span>
+            <span class="phrase" style="--d:3.0s">Phát Triển</span>
+        </h2>
     </div>
 
     <script>
-        let previousCount = 0;
+        // Absolute rows seen last fetch, baseline at reset, and previous relative count for animation
+    let lastAbsCount = 0;
+    let baselineCount = 0;
+    let previousRelativeCount = 0;
+    // Track how many absolute rows we've emitted names for
+    let lastEmittedAbsCount = 0;
+    // Countdown timer state (3 minutes)
+    let countdownMsTotal = 3 * 60 * 1000; // 180000 ms
+    let countdownEndAt = null; // timestamp when countdown will reach zero
+    let countdownTimerId = null;
+
         function updateCounter() {
             gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: SPREADSHEET_ID,
                 range: SHEET_NAME
-            }).then(function(response) {
+            }).then(function (response) {
                 const rows = response.result.values || [];
                 // Subtract 1 to exclude header row if it exists
                 const count = Math.max(0, rows.length - 1);
-                
+                lastAbsCount = count;
+
                 const counterElement = document.getElementById('counter');
                 const successMessage = document.getElementById('successMessage');
-                const fireElement = document.querySelector('.mo-fire');
-                
-                // Update counter
-                counterElement.textContent = count + '/136';
-                
-                // Calculate progress percentage more precisely
-                const progress = Math.min(100, (count / 136) * 100);
-                
-                // Smoothly update the clip-path
-                if (count > previousCount) {
-                    // Start from current position
-                    const startProgress = (previousCount / 136) * 100;
-                    // Animate to new position
-                    fireElement.style.clipPath = `inset(${100 - startProgress}% 0 0 0)`;
-                    // Force reflow
-                    fireElement.offsetHeight;
-                    // Animate to new position
-                    fireElement.style.clipPath = `inset(${100 - progress}% 0 0 0)`;
+                // Animate scan by adjusting SVG clipPath rect (decoupled from sparks)
+                const VIEWBOX_W = 125;
+                const VIEWBOX_H = 189.864;
+                const scanRect = document.getElementById('scanRect');
+
+                // Compute relative count since last reset and update UI
+                const relativeCount = Math.max(0, count - baselineCount);
+                counterElement.textContent = relativeCount + '/136';
+
+                // Calculate progress percentage with 200 parts
+                const progress = Math.min(100, (relativeCount / 200) * 100);
+
+                // Smoothly update scan rectangle via CSS transitions on y/height
+                const h = Math.min(1, relativeCount / 200) * VIEWBOX_H;
+                const y = VIEWBOX_H - h;
+                if (scanRect) {
+                    scanRect.setAttribute('y', y.toFixed(3));
+                    scanRect.setAttribute('height', h.toFixed(3));
                 }
-                
-                previousCount = count;
-                
-                if (count >= 136) {
-                    successMessage.style.display = 'block';
+                previousRelativeCount = relativeCount;
+
+                // Spawn names for any new absolute rows since last emission
+                if (lastEmittedAbsCount === 0) {
+                    // Initialize on first fetch to avoid dumping backlog
+                    lastEmittedAbsCount = count;
+                } else if (count > lastEmittedAbsCount) {
+                    const delta = count - lastEmittedAbsCount;
+                    spawnNames(rows, lastEmittedAbsCount, delta);
+                    lastEmittedAbsCount = count;
+                }
+
+                // Update sparks based on relativeCount
+                updateSparks(relativeCount);
+
+                if (relativeCount >= 136) {
+                    if (successMessage.style.display !== 'block') {
+                        successMessage.style.display = 'block';
+                        successMessage.classList.remove('animate');
+                        successMessage.style.setProperty('--base', '1.2s');
+                        requestAnimationFrame(() => {
+                            successMessage.classList.add('animate');
+                        });
+                    }
                 } else {
                     successMessage.style.display = 'none';
+                    successMessage.classList.remove('animate');
+                    successMessage.style.removeProperty('--base');
                 }
-            }).catch(function(error) {
+            }).catch(function (error) {
                 console.error('Error fetching data:', error);
             });
         }
+
+        // Create/update small flame sparks per user unit
+        function updateSparks(relativeCount) {
+            const svg = document.querySelector('.mo-fire svg');
+            const container = svg.querySelector('#sparks');
+            if (!container) return;
+
+            // Remove sparks if reached target
+            if (relativeCount >= 136) {
+                container.innerHTML = '';
+                return;
+            }
+
+            const desired = Math.min(relativeCount, 200); // cap for safety
+            const current = container.childElementCount;
+
+            if (current > desired) {
+                // remove extras
+                for (let i = current - 1; i >= desired; i--) {
+                    container.removeChild(container.children[i]);
+                }
+            } else if (current < desired) {
+                for (let i = current; i < desired; i++) {
+                    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                    g.setAttribute('class', 'spark');
+                    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    // Randomized circle radius for variety
+                    const rr = 1.5 + pseudoRandom(i + 12001) * 2.0; // 1.5..3.5
+                    c.setAttribute('r', rr.toFixed(2));
+                    c.setAttribute('cx', '0');
+                    c.setAttribute('cy', '0');
+                    c.setAttribute('fill', '#F36E21');
+                    g.appendChild(c);
+
+                    // Deterministic pseudo-random position/motion based on index
+                    const r1 = pseudoRandom(i + 1);
+                    const r2 = pseudoRandom(i + 101);
+                    const r3 = pseudoRandom(i + 1001);
+                    const r4 = pseudoRandom(i + 7001);
+                    const r5 = pseudoRandom(i + 8001);
+                    const r6 = pseudoRandom(i + 9001);
+                    const r7 = pseudoRandom(i + 11001);
+                    const r8 = pseudoRandom(i + 5001);
+
+                    // Place within viewBox area near the main flame (20..105 x, 70..165 y)
+                    const x = 40 + r1 * 85; // 20..105
+                    const y = 90 + r2 * 95; // 70..165
+                    const s = 0.7 + r3 * 0.6; // 0.7..1.3
+                    const rot = Math.round(r8 * 360);
+                    // Float deltas and timing
+                    const fx = (r4 - 0.5) * 20; // -10..10
+                    const fy = 25 + r5 * 35; // 25..60 upward
+                    const dur = 4 + r6 * 4; // 4..8s (slower)
+                    const delay = r7 * 0.8; // 0..0.8s
+
+                    g.setAttribute('style', `--x:${x}px;--y:${y}px;--s:${s};--r:${rot}deg;--fx:${fx}px;--fy:${fy}px;--dur:${dur}s;--delay:${delay}s`);
+                    container.appendChild(g);
+                }
+            }
+        }
+
+        function pseudoRandom(seed) {
+            // Simple xorshift-based PRNG for stable layout
+            let x = seed | 0;
+            x ^= x << 13; x ^= x >> 17; x ^= x << 5;
+            // Map to [0,1)
+            return ((x >>> 0) % 10000) / 10000;
+        }
+
+        function resetCounter() {
+            const counterElement = document.getElementById('counter');
+            const successMessage = document.getElementById('successMessage');
+            const VIEWBOX_W = 125;
+            const VIEWBOX_H = 189.864;
+            const scanRect = document.getElementById('scanRect');
+            // Set new baseline at current absolute rows
+            baselineCount = lastAbsCount;
+            // Reset animation baseline and visuals
+            previousRelativeCount = 0;
+            counterElement.textContent = '0/136';
+            if (scanRect) {
+                scanRect.setAttribute('y', VIEWBOX_H.toFixed(3));
+                scanRect.setAttribute('height', '0');
+            }
+            successMessage.style.display = 'none';
+            successMessage.classList.remove('animate');
+            successMessage.style.removeProperty('--base');
+            // Clear sparks
+            const svg = document.querySelector('.mo-fire svg');
+            const container = svg.querySelector('#sparks');
+            if (container) container.innerHTML = '';
+            // Clear name stream and reset emission pointer
+            const ns = document.getElementById('nameStream');
+            if (ns) ns.innerHTML = '';
+            lastEmittedAbsCount = lastAbsCount;
+            // Reset countdown timer to 03:00 and stop ticking
+            stopCountdown();
+            setTimerDisplay(countdownMsTotal);
+            // Immediately fetch to reflect the new baseline
+            if (window.gapi && gapi.client && gapi.client.sheets) {
+                updateCounter();
+            }
+        }
+
+        // Spawn animated name items for the last `delta` rows, starting from absolute index `startAbsIndex`
+        function spawnNames(rows, startAbsIndex, delta) {
+            // rows include header at index 0; data rows start from 1
+            const ns = document.getElementById('nameStream');
+            if (!ns) return;
+            for (let i = 0; i < delta; i++) {
+                const dataIndex = startAbsIndex + i + 1; // +1 to account for header row
+                const row = rows[dataIndex] || [];
+                const nameVal = (row[1] || '').toString().trim(); // Column B (index 1)
+                const label = nameVal ? `Đồng chí ${nameVal}` : 'Đồng chí (Không tên)';
+
+                const el = document.createElement('div');
+                el.className = 'name-item';
+                el.textContent = label;
+
+                // Randomize layout: base left inside left column, extra horizontal offset, horizontal scale, font size
+                const seed = (startAbsIndex + i + 1) * 9176;
+                const left = 10 + Math.round(pseudoRandom(seed + 10) * (window.innerWidth * 0.66 - 80)); // within left ~66% minus margin
+                const offset = Math.round((pseudoRandom(seed) - 0.5) * 60); // -30..30 px
+                const scaleX = 0.85 + pseudoRandom(seed + 20) * 0.5; // 0.85..1.35
+                const fs = 40 + Math.round(pseudoRandom(seed + 30) * 10); // 40..50 px
+                const dur = 5.5 + (pseudoRandom(seed + 1) * 2.5); // ~5.5..8.0s (slower)
+                // Sequential delay: each item in this batch appears after the previous one
+                const delay = i * 0.8 + (pseudoRandom(seed + 2) * 0.3); // staggered by 0.8s + 0-0.3s random
+                el.style.setProperty('--left', `${left}px`);
+                el.style.setProperty('--x', `${offset}px`);
+                el.style.setProperty('--sx', scaleX.toFixed(2));
+                el.style.setProperty('--fs', `${fs}px`);
+                el.style.setProperty('--dur', `${dur.toFixed(2)}s`);
+                el.style.setProperty('--delay', `${delay.toFixed(2)}s`);
+
+                ns.appendChild(el);
+                el.addEventListener('animationend', () => el.remove());
+            }
+        }
+
+        document.getElementById('resetBtn')?.addEventListener('click', resetCounter);
+        document.getElementById('startBtn')?.addEventListener('click', startCountdown);
+
+        function startCountdown() {
+            // If already running, ignore
+            if (countdownTimerId) return;
+            const now = Date.now();
+            countdownEndAt = now + countdownMsTotal;
+            tickCountdown();
+            countdownTimerId = setInterval(tickCountdown, 250);
+        }
+
+        function stopCountdown() {
+            if (countdownTimerId) {
+                clearInterval(countdownTimerId);
+                countdownTimerId = null;
+            }
+            countdownEndAt = null;
+        }
+
+        function tickCountdown() {
+            if (!countdownEndAt) return;
+            const remaining = Math.max(0, countdownEndAt - Date.now());
+            setTimerDisplay(remaining);
+            if (remaining <= 0) {
+                stopCountdown();
+            }
+        }
+
+        function setTimerDisplay(ms) {
+            const el = document.getElementById('timerDisplay');
+            if (!el) return;
+            const totalSeconds = Math.ceil(ms / 1000); // round up for display
+            const m = Math.floor(totalSeconds / 60);
+            const s = totalSeconds % 60;
+            el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        }
+
+        // Initialize timer display
+        setTimerDisplay(countdownMsTotal);
     </script>
 </body>
+
 </html>
