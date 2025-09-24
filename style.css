@@ -2,7 +2,7 @@
   opacity: 0.85;
   transform-origin: center;
   transform-box: fill-box;
-  animation: sparkFloat var(--dur, 3s) ease-in infinite;
+  animation: sparkFloat var(--dur, 3s) ease-in forwards;
   animation-delay: var(--delay, 0s);
   will-change: transform, opacity;
 }
@@ -14,7 +14,7 @@
   }
   10% { opacity: 1; }
   100% {
-    transform: translate(calc(var(--x, 60px) + var(--fx, 0px)), calc(var(--y, 140px) - var(--fy, 40px))) scale(calc(var(--s,1) * 0.95)) rotate(var(--r, 0deg));
+    transform: translate(62.5px, 95px) scale(calc(var(--s,1) * 0.5)) rotate(var(--r, 0deg));
     opacity: 0;
   }
 }
@@ -271,4 +271,14 @@ svg {
 .mo-fire svg circle {
   display: block !important;
   visibility: visible !important;
+}
+
+/* Auto scan spark animation */
+.auto-scan-spark {
+  opacity: 1;
+  transform-origin: center;
+}
+
+.auto-scan-spark circle {
+  filter: drop-shadow(0 0 3px #FFD04A);
 }
