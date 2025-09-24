@@ -19,18 +19,21 @@
   }
 }
 .mo-fire {
-  width: 200px;
-  height: auto;
-  position: absolute;
-  left:77.5%;
-  margin-left: -100px;
-  top: 13.8%;
+  width: 200px !important;
+  height: auto !important;
+  position: absolute !important;
+  left: 77.5% !important;
+  margin-left: -100px !important;
+  top: 13.8% !important;
+  z-index: 10 !important;
   /* clip-path removed; scan is applied only to flame shapes via SVG clipPath */
 }
 .mo-fire svg {
-  width: 100%;
-  height: auto;
-  position: relative;
+  width: 100% !important;
+  height: auto !important;
+  position: relative !important;
+  display: block !important;
+  overflow: visible !important;
 }
 .flame {
   animation-name: flamefly;
@@ -174,4 +177,98 @@
   5% { opacity: 1; }
   95% { opacity: 1; }
   100% { transform: translateX(var(--x, 0)) translateY(-110vh) scaleX(var(--sx, 1)); opacity: 0; }
+}
+
+/* Success message positioning and styling */
+.success-container {
+  display: none;
+  position: fixed !important;
+  top: 50% !important;
+  left: 10% !important;
+  transform: translate(0, -50%) !important;
+  text-align: center !important;
+  color: white !important;
+  z-index: 1000 !important;
+  width: 60% !important;
+  pointer-events: none !important;
+}
+
+#successMessage[style*="display: block"] {
+  display: block !important;
+}
+
+.success-title {
+  font-size: 90px !important;
+  margin-bottom: 15px !important;
+  font-family: 'DejaVu Serif', serif !important;
+  text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000 !important;
+  text-transform: uppercase !important;
+  opacity: 1 !important;
+}
+
+.success-subtitle {
+  font-size: 70px !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+  font-family: 'DejaVu Serif', serif !important;
+  text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000 !important;
+  opacity: 1 !important;
+}
+
+/* Timer and control styling */
+.timer-controls {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+}
+
+.timer-display {
+  min-width: 60px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  padding: 4px 6px !important;
+  background: rgba(0,0,0,0.35) !important;
+  border: 1px solid rgba(255,255,255,0.35) !important;
+  border-radius: 4px !important;
+  color: white !important;
+}
+
+.counter-display {
+  font-size: 15px !important;
+  margin: 8px 0 0 !important;
+  color: white !important;
+}
+
+.control-btn {
+  font-size: 12px !important;
+  padding: 4px 8px !important;
+  color: #fff !important;
+  background: rgba(0,0,0,0.5) !important;
+  border: 1px solid rgba(255,255,255,0.4) !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+}
+
+.reset-btn {
+  margin-top: 6px !important;
+}
+
+.counter-container {
+  position: fixed !important;
+  bottom: 10px !important;
+  right: 10px !important;
+  color: white !important;
+  text-align: right !important;
+  z-index: 1001 !important;
+}
+
+/* Cross-browser SVG compatibility */
+svg {
+  max-width: 100% !important;
+}
+
+.mo-fire svg circle {
+  display: block !important;
+  visibility: visible !important;
 }

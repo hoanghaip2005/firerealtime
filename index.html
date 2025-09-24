@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="random.js"></script>
+    <link rel="stylesheet" href="./style.css">
+    <script src="./random.js"></script>
     <script>
         const API_KEY = 'AIzaSyCbJ2QbFkvDpzIrbijzl6Km7pMB0VNvpi0';
         const SPREADSHEET_ID = '1GJlGbhDQRyRX5FrwhVmnbWvohuItY27rKzcVNdhfeBs';
@@ -39,6 +39,8 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
         }
 
         canvas {
@@ -99,37 +101,25 @@
 
 
     </div>
-    <div style="position: fixed; bottom: 10px; right: 10px; color: white; text-align: right;">
-        <div style="display:flex; gap:8px; align-items:center; justify-content:flex-end;">
-            <div id="timerDisplay" style="min-width:60px; font-weight:600; font-size: 14px; padding: 4px 6px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.35); border-radius: 4px;">03:00</div>
-            <button id="startBtn" title="Bắt đầu đếm ngược"
-                style="font-size: 12px; padding: 4px 8px; color: #fff; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.4); border-radius: 4px; cursor: pointer;">
-                Bắt đầu
-            </button>
+    <div class="counter-container">
+        <div class="timer-controls">
+            <div id="timerDisplay" class="timer-display">03:00</div>
+            <button id="startBtn" class="control-btn start-btn" title="Bắt đầu đếm ngược">Bắt đầu</button>
         </div>
-        <h1 id="counter" style="font-size: 15px; margin: 8px 0 0;">0/136</h1>
-        <button id="resetBtn" title="Reset counter"
-            style="margin-top: 6px; font-size: 12px; padding: 4px 8px; color: #fff; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.4); border-radius: 4px; cursor: pointer;">
-            Reset
-        </button>
+        <h1 id="counter" class="counter-display">0/136</h1>
+        <button id="resetBtn" class="control-btn reset-btn" title="Reset counter">Reset</button>
     </div>
 
-    <div id="successMessage"
-        style="display: none; position: fixed; top: 50%; left: 35.33%; transform: translate(0, -50%); text-align: center; color: white; z-index: 1000; width: 65.66%;"
-        data-anim="true">
-        <h1
-            style="font-size: 90px; margin-bottom: 15px; font-family: 'DejaVu Serif', serif; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000; text-transform: uppercase;">
-            Tuổi Trẻ Xã Thanh Oai</h1>
-        <h2
-            style="font-size: 70px; margin: 0; line-height: 1.5; font-family: 'DejaVu Serif', serif; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;">
+    <div id="successMessage" class="success-container" data-anim="true">
+        <h1 class="success-title">Tuổi Trẻ Xã Thanh Oai</h1>
+        <h2 class="success-subtitle">
             <span class="phrase" style="--d:0.0s">Tiên Phong</span>
             <span class="sep" style="--d:0.4s"> - </span>
             <span class="phrase" style="--d:0.8s">Đoàn Kết</span>
             <span class="sep" style="--d:1.2s"> - </span>
             <span class="phrase" style="--d:1.6s">Sáng Tạo</span>
         </h2>
-        <h2
-            style="font-size: 70px; margin: 0; line-height: 1.5; font-family: 'DejaVu Serif', serif; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;">
+        <h2 class="success-subtitle">
             <span class="phrase" style="--d:2.2s">Đột Phá</span>
             <span class="sep" style="--d:2.6s"> - </span>
             <span class="phrase" style="--d:3.0s">Phát Triển</span>
@@ -195,12 +185,16 @@
                 updateSparks(relativeCount);
 
                 if (relativeCount >= 136) {
+                    console.log('Reached 136! Showing success message');
                     if (successMessage.style.display !== 'block') {
                         successMessage.style.display = 'block';
+                        successMessage.style.opacity = '1';
                         successMessage.classList.remove('animate');
                         successMessage.style.setProperty('--base', '1.2s');
+                        console.log('Success message display set to block');
                         requestAnimationFrame(() => {
                             successMessage.classList.add('animate');
+                            console.log('Animation class added');
                         });
                     }
                 } else {
