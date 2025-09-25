@@ -2,19 +2,63 @@
   opacity: 0.85;
   transform-origin: center;
   transform-box: fill-box;
-  animation: sparkFloat var(--dur, 3s) ease-in forwards;
+  animation: sparkFloat var(--dur, 4s) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   animation-delay: var(--delay, 0s);
   will-change: transform, opacity;
 }
 
+/* Style for sparks outside SVG */
+.spark-particle {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: #F36E21;
+  border-radius: 50%;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0.85;
+  animation: sparkArc var(--dur, 4s) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation-delay: var(--delay, 0s);
+}
+
 @keyframes sparkFloat {
   0% {
-    transform: translate(var(--x, 60px), var(--y, 140px)) scale(var(--s, 1)) rotate(var(--r, 0deg));
+    transform: translate(var(--startX, 50vw), var(--startY, 100vh)) scale(var(--s, 1)) rotate(var(--r, 0deg));
     opacity: 0;
   }
-  10% { opacity: 1; }
+  10% { 
+    opacity: 1; 
+  }
+  50% {
+    transform: translate(var(--midX, calc(50vw + var(--arcX, 0px))), var(--midY, 50vh)) scale(var(--s, 1)) rotate(calc(var(--r, 0deg) + 180deg));
+    opacity: 1;
+  }
   100% {
-    transform: translate(62.5px, 95px) scale(calc(var(--s,1) * 0.5)) rotate(var(--r, 0deg));
+    transform: translate(var(--endX, 62.5px), var(--endY, 95px)) scale(calc(var(--s,1) * 0.5)) rotate(calc(var(--r, 0deg) + 360deg));
+    opacity: 0;
+  }
+}
+
+@keyframes sparkArc {
+  0% {
+    left: var(--startX, 50vw);
+    top: var(--startY, 100vh);
+    transform: scale(var(--s, 1)) rotate(var(--r, 0deg));
+    opacity: 0;
+  }
+  10% { 
+    opacity: 1; 
+  }
+  50% {
+    left: var(--midX, 50vw);
+    top: var(--midY, 50vh);
+    transform: scale(var(--s, 1)) rotate(calc(var(--r, 0deg) + 180deg));
+    opacity: 1;
+  }
+  100% {
+    left: var(--endX, 50vw);
+    top: var(--endY, 50vh);
+    transform: scale(calc(var(--s, 1) * 0.3)) rotate(calc(var(--r, 0deg) + 360deg));
     opacity: 0;
   }
 }
@@ -163,7 +207,7 @@
   transform: translateX(var(--x, 0));
   color: #fff;
   font-family: 'DejaVu Serif', serif;
-  font-size: 24px; /* randomized per item (40-50px) */
+  font-size: 32px; /* randomized per item (40-50px) */
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
   white-space: nowrap;
   letter-spacing: 0.3px;
