@@ -10,8 +10,8 @@
 /* Style for sparks outside SVG */
 .spark-particle {
   position: fixed;
-  width: 10px;
-  height: 10px;
+  width: 15px;
+  height: 15px;
   background: #F36E21;
   border-radius: 50%;
   z-index: 1000;
